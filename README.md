@@ -1,24 +1,48 @@
 # maranget
 
-Pattern match exhaustiveness checking for compilers. [Maranget's matrix algorithm](http://moscova.inria.fr/~maranget/papers/warn/warn.pdf), bring your own AST.
-
-Implement one trait describing your constructors, lower your patterns to a constructor and wildcard tree, and get back the three checks every ADT language needs: missing-case witnesses for non-exhaustive matches (`missing Cons(_, Cons(_, _))`), unreachable arm detection, and guards that cover nothing but are still reachability checked. Open types get fresh-literal witnesses: a match on `0, 1, 2` reports `missing 3`. Zero dependencies, no unsafe.
+Maranget's matrix algorithm for pattern match exhaustiveness and reachability checking, parameterized over your AST.
 
 ```rust
-struct Bools;
+use maranget::{check, Arm, Pat, Signature};
 
-impl Signature for Bools {
-    type Con = bool;
-    fn arity(&self, _: &bool) -> usize { 0 }
-    fn siblings(&self, _: &bool) -> Option<Vec<bool>> { Some(vec![false, true]) }
+// Nil | Cons(head, tail)
+#[derive(Clone, PartialEq)]
+enum Con {
+    Nil,
+    Cons,
 }
 
-let report = check(&Bools, &[Arm::new(Pat::Con(true, vec![]))]);
-assert_eq!(report.missing, Some(Witness::Con(false, vec![])));
-```
+struct List;
 
-```bash
-cargo add maranget
+impl Signature for List {
+    type Con = Con;
+    fn arity(&self, c: &Con) -> usize {
+        match c {
+            Con::Cons => 2,
+            Con::Nil => 0,
+        }
+    }
+    fn siblings(&self, _: &Con) -> Option<Vec<Con>> {
+        Some(vec![Con::Nil, Con::Cons])
+    }
+}
+
+// match xs of
+//   Nil => ...
+//   Cons(x, Nil) => ...
+let nil = || Pat::Con(Con::Nil, vec![]);
+let report = check(
+    &List,
+    &[
+        Arm::new(nil()),
+        Arm::new(Pat::Con(Con::Cons, vec![Pat::Any, nil()])),
+    ],
+);
+
+assert!(!report.is_exhaustive());
+// report.missing: Cons(_, Cons(_, _))
+// report.unreachable: arm indices covered by earlier arms
+// Arm::guarded(..): checked for reachability, contributes no coverage
 ```
 
 ## License
