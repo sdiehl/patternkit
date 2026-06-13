@@ -4,8 +4,8 @@
 
 use std::fmt;
 
-use maranget::tree::{compile, occurrences};
-use maranget::{Pat, Signature};
+use patternkit::tree::{compile, occurrences};
+use patternkit::{Pat, Signature};
 
 #[derive(Clone, Debug, PartialEq)]
 enum Con {

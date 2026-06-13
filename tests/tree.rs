@@ -1,5 +1,5 @@
-use maranget::tree::{compile, occurrences, Branch, Occurrence, Tree};
-use maranget::{Pat, Signature};
+use patternkit::tree::{compile, occurrences, Branch, Occurrence, Tree};
+use patternkit::{Pat, Signature};
 
 #[derive(Clone, Debug, PartialEq)]
 enum Con {

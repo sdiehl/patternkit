@@ -13,14 +13,14 @@
 //!
 //! The tree is name-agnostic, like the rest of the crate: a leaf carries
 //! the host's action for the winning arm, not its bindings. The host
-//! recovers bindings by walking its own pattern against the occurrences;
+//! recovers bindings by walking its own pattern against the occurrences.
 //! [`occurrences`] gives the occurrence of every wildcard in left-to-right
 //! order, ready to zip against the variables the host recorded when it
 //! lowered the pattern.
 //!
 //! ```
-//! use maranget::{Pat, Signature};
-//! use maranget::tree::{compile, Tree};
+//! use patternkit::{Pat, Signature};
+//! use patternkit::tree::{compile, Tree};
 //!
 //! struct Bools;
 //! impl Signature for Bools {
@@ -91,11 +91,11 @@ pub enum Tree<C, A> {
     /// The winning arm: run its action. Bindings are the host's to recover
     /// from the arm's pattern (see [`occurrences`]).
     Leaf(A),
-    /// No arm matches. Unreachable when the match is exhaustive; a host that
-    /// trusts [`check`](crate::check) may treat this as impossible.
+    /// No arm matches. Unreachable when the match is exhaustive, so a host
+    /// that trusts [`check`](crate::check) may treat this as impossible.
     Fail,
     /// Inspect the head constructor at `occurrence` and branch. `cases` lists
-    /// the constructors the arms test; `default` covers the rest, and is
+    /// the constructors the arms test, and `default` covers the rest. It is
     /// `None` exactly when `cases` already names every sibling.
     Switch {
         occurrence: Occurrence,
@@ -171,7 +171,7 @@ pub fn compile<S: Signature, A: Clone>(sig: &S, arms: &[(Pat<S::Con>, A)]) -> Tr
 /// Compile arms to a splitting tree, choosing each switch column with `heuristic`.
 ///
 /// The heuristic receives the current pattern matrix and returns a column
-/// index; [`leftmost`] is the default. A smarter heuristic (Maranget's
+/// index, with [`leftmost`] as the default. A smarter heuristic (Maranget's
 /// necessity scores) yields a smaller tree without changing its meaning.
 #[must_use]
 pub fn compile_with<S, A, H>(sig: &S, arms: &[(Pat<S::Con>, A)], heuristic: H) -> Tree<S::Con, A>

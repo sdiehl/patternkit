@@ -1,6 +1,6 @@
 use std::fmt;
 
-use maranget::{check, Arm, Pat, Signature, Witness};
+use patternkit::{check, Arm, Pat, Signature, Witness};
 
 #[derive(Clone, Debug, PartialEq)]
 enum Con {

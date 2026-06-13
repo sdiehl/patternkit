@@ -1,9 +1,11 @@
-# maranget
+# patternkit
 
-Maranget's matrix algorithm for pattern match exhaustiveness and reachability checking, parameterized over your AST.
+Maranget's matrix algorithm for pattern match exhaustiveness and reachability checking over arbitrary ASTs, for building compilers in Rust. Also compiles matches to splitting trees for code generation.
+
+## Checking
 
 ```rust
-use maranget::{check, Arm, Pat, Signature};
+use patternkit::{check, Arm, Pat, Signature};
 
 // Nil | Cons(head, tail)
 #[derive(Clone, PartialEq)]
@@ -47,11 +49,11 @@ assert!(!report.is_exhaustive());
 
 ## Splitting trees
 
-The `tree` module is the other half of Maranget's work: compiling a match to a splitting tree (a decision tree) for code generation. It reuses the same `Signature` and `Pat`, so one description of your types drives both exhaustiveness checking and lowering.
+`tree::compile` lowers a match to a splitting tree for code generation, reusing the same `Signature` and `Pat`.
 
 ```rust
-use maranget::tree::{compile, Tree};
-use maranget::{Pat, Signature};
+use patternkit::tree::{compile, Tree};
+use patternkit::{Pat, Signature};
 
 // reuse the List signature from above
 // match xs of Nil => 0 | Cons(x, Nil) => 1 | Cons(x, Cons(..)) => 2
@@ -64,9 +66,9 @@ let tree = compile(&List, &arms);
 // (switch . (Nil (leaf 0)) (Cons (switch .1 (Nil (leaf 1)) (Cons (leaf 2)))))
 ```
 
-A `Tree` is a nest of `Switch` nodes (each naming the `Occurrence` it inspects, a path into the scrutinee) bottoming out at `Leaf` actions. Nested constructors are deconstructed by descending into child occurrences. A switch over a complete constructor set carries no `default`; open types (integers, strings) keep one. Earlier arms win, and the tree tests no value twice.
+A `Tree` is `Switch` nodes, each naming the `Occurrence` (path into the scrutinee) it inspects, bottoming out at `Leaf` actions. Nested constructors descend into child occurrences. Earlier arms win, and no value is tested twice. A complete constructor set carries no `default`, open types (integers, strings) keep one.
 
-The tree is name-agnostic like the checker: a leaf carries your action for the winning arm, not its bindings. Recover bindings by walking your own pattern against the occurrences; `tree::occurrences(pat)` gives the occurrence of every wildcard in order, ready to zip with the variables you recorded when lowering. Column selection is pluggable via `compile_with` (default: `leftmost`).
+Leaves carry the host's action, not bindings. Recover them by walking the source pattern against the occurrences: `tree::occurrences(pat)` lists the occurrence of every wildcard in order. Column selection is pluggable via `compile_with` (default `leftmost`).
 
 See `examples/splitting.rs`.
 

@@ -3,7 +3,7 @@
 
 use std::fmt;
 
-use maranget::{check, Arm, Pat, Signature};
+use patternkit::{check, Arm, Pat, Signature};
 
 #[derive(Clone, Debug, PartialEq)]
 enum Con {

@@ -1,5 +1,5 @@
 [package]
-name = "maranget"
+name = "patternkit"
 version = "0.1.0"
 authors = ["Stephen Diehl <stephen.m.diehl@gmail.com>"]
 categories = ["compilers", "algorithms"]
@@ -7,8 +7,8 @@ edition = "2021"
 keywords = ["pattern-matching", "exhaustiveness", "compiler", "typechecker"]
 license = "MIT"
 readme = "README.md"
-repository = "https://github.com/sdiehl/maranget"
-description = "Exhaustiveness and usefulness checking for pattern matches: Maranget's matrix algorithm parameterized over your AST, with witness generation for non-exhaustive matches"
+repository = "https://github.com/sdiehl/patternkit"
+description = "Maranget's matrix algorithm for pattern match exhaustiveness and reachability"
 
 [dependencies]
 

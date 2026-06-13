@@ -11,7 +11,7 @@
 //! reachability.
 //!
 //! ```
-//! use maranget::{check, Arm, Pat, Signature, Witness};
+//! use patternkit::{check, Arm, Pat, Signature, Witness};
 //!
 //! struct Bools;
 //!
