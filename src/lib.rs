@@ -29,8 +29,14 @@
 //! assert_eq!(report.missing, Some(Witness::Con(false, vec![])));
 //! assert!(report.unreachable.is_empty());
 //! ```
+//!
+//! [`tree`] is the companion: it compiles the same arms to a splitting tree
+//! (a decision tree) for code generation, deconstructing nested constructors
+//! by descending into child occurrences.
 
 use std::fmt;
+
+pub mod tree;
 
 /// How the host language's constructors fit together. `Con` is whatever the
 /// host uses to identify a constructor head: an enum, an interned symbol, a

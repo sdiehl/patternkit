@@ -16,6 +16,10 @@ description = "Exhaustiveness and usefulness checking for pattern matches: Maran
 name = "demo"
 path = "examples/demo.rs"
 
+[[example]]
+name = "splitting"
+path = "examples/splitting.rs"
+
 [lints.rust]
 unsafe_code = "forbid"
 missing_debug_implementations = "warn"
